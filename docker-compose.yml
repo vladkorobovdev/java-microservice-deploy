@@ -1,21 +1,27 @@
 services:
-  service-one:
-    build:
-      context: ./service-one/
+  nginx:
+    image: nginx:latest
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
     depends_on:
+      - service-one
       - service-two
       - service-three
+
+  service-one:
+    build: ./service-one/
+    environment:
+      - APP_NAME=Service1
+
   service-two:
-    build:
-      context: ./service-two/
-    ports:
-      - "8081:8080"
-    depends_on:
-      - service-three
+    build: ./service-two/
+    environment:
+      - APP_NAME=Service2
+
   service-three:
-    build:
-      context: ./service-three/
-    ports:
-      - "8082:8080"
+    build: ./service-three/
+    environment:
+      - APP_NAME=Service3
